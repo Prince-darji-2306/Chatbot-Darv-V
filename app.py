@@ -1,13 +1,11 @@
 import os
 import streamlit as st
 from groq import Groq
-from dotenv import load_dotenv
-load_dotenv()
 
-# --- Initialize client ---
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-# --- Streamlit page config ---
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+config = st.secrets['CONFIG']
+tone = st.secrets['THINK']
 st.set_page_config(page_title="Darv-V GPT", layout="wide")
 
 st.markdown("""
@@ -32,14 +30,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Session State Initialization ---
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 if "selected_chat" not in st.session_state:
     st.session_state.selected_chat = None
 
-# --- Sidebar for Chat Management ---
 st.sidebar.title("💬 Your Chats")
 rerun_needed = False
 
@@ -49,7 +45,6 @@ if st.sidebar.button("➕ New Chat"):
     st.session_state.selected_chat = len(st.session_state.chat_history) - 1
     rerun_needed = True
 
-# Display chats in sidebar with delete buttons
 chats_to_delete = []
 for idx, chat in enumerate(st.session_state.chat_history):
     # Title: use first user prompt or fallback
@@ -61,7 +56,6 @@ for idx, chat in enumerate(st.session_state.chat_history):
     if col2.button("🗑", key=f"delete_{idx}"):
         chats_to_delete.append(idx)
 
-# Perform deletions
 for idx in sorted(chats_to_delete, reverse=True):
     del st.session_state.chat_history[idx]
     if st.session_state.selected_chat == idx:
@@ -90,17 +84,14 @@ current_chat = st.session_state.chat_history[st.session_state.selected_chat]
 
 
 
-
 # --- Main Chat Interface ---
 st.title("🧠 Ask Darv-V")
 st.caption("Chatbot app with Live Response and Thinking")
 
-# Display previous messages
 for role, msg in current_chat:
     with st.chat_message(role):
         st.markdown(msg)
 
-# --- Input ---
 prompt = st.chat_input("Type your message...")
     
 def is_markdown_sensitive(text):
@@ -126,9 +117,13 @@ if prompt:
 
     # Stream response from API
     response = client.chat.completions.create(
-        model="deepseek-r1-distill-llama-70b",
-        messages=[{"role": role, "content": msg} for role, msg in current_chat],
-        stream=True,
+    model="deepseek-r1-distill-llama-70b",
+    temperature = 0.4,
+    max_tokens= 3048,
+    messages=([{'role': 'system', 'content': config}] +
+             [{'role': 'system', 'content': tone}]  + 
+             [{"role": role, "content": msg} for role, msg in current_chat]),
+    stream=True,
     )
 
     for chunk in response:
