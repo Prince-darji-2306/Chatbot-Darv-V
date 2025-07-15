@@ -1,0 +1,22 @@
+.sidebar-custom [data-testid="stSidebar"] {
+    width: 260px !important;
+}
+
+.sidebar-custom section[data-testid="stSidebar"] > div {
+    padding-right: 10px;
+}
+
+.container-custom .block-container {
+    padding-top: 1px;
+    padding-bottom: -10px;
+}
+
+.thinking-box {
+    max-height: 100px;
+    overflow-y: auto;
+    background-color: #f1f1f1;
+    padding: 6px 10px;
+    font-size: 0.85em;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
