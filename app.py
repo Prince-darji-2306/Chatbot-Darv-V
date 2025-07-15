@@ -3,7 +3,7 @@ import streamlit as st
 from groq import Groq
 
 # Set page config
-st.set_page_config(page_title="Darv-V | AI That Thinks Before It Speaks", layout="wide", page_icon='static/img/icon.png')
+st.set_page_config(page_title="Darv-V | AI That Thinks Before It Speaks", layout="wide", page_icon='static/img/Icon.png')
 
 # Inject CSS from external file
 def load_local_css(file_name):
