@@ -69,7 +69,7 @@ if rerun_needed:
 current_chat = st.session_state.chat_history[st.session_state.selected_chat]
 
 # --- Main Chat Interface ---
-st.title("🧠 Ask Darv-V")
+st.title("🧠Ask Darv-V")
 st.caption("Chatbot app with Live Response and Thinking")
 
 for role, msg in current_chat:
