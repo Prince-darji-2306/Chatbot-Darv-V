@@ -27,12 +27,4 @@ DARV-V is a minimal yet interactive AI assistant that mimics human-like thinking
 
 DARV-V was built as a hands-on application of **Prompt Engineering** concepts. The goal was to explore how system prompts and interaction flow can shape the personality and behavior of an AI assistant — not just its words.
 
----
 
-## 🛠 Run Locally
-
-```bash
-git clone https://github.com/yourusername/darv-v.git
-cd darv-v
-pip install -r requirements.txt
-streamlit run app.py
