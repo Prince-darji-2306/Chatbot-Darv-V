@@ -1,6 +1,9 @@
 import os
 import streamlit as st
 from groq import Groq
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Set page config
 st.set_page_config(page_title="Darv-V | AI That Thinks Before It Speaks", layout="wide", page_icon='static/img/Icon.png')
@@ -17,9 +20,8 @@ load_local_css("static/css/cstyle.css")
 st.markdown('<div class="custom-sidebar custom-container">', unsafe_allow_html=True)
 
 # --- API and session setup ---
-client = Groq(api_key=st.secrets["GROQ_API_KEY"])
-config = st.secrets['CONFIG']
-tone = st.secrets['THINK']
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+config = os.getenv('CONFIG')
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -78,18 +80,12 @@ for role, msg in current_chat:
 
 prompt = st.chat_input("Type your message...")
 
-def is_markdown_sensitive(text):
-    return any(sym in text for sym in ['#', '*', '-', '>'])
-
 if prompt:
     current_chat.append(("user", prompt))
 
     # Display user prompt
     with st.chat_message("user"):
-        if is_markdown_sensitive(prompt):
-            st.code(prompt, language='text')
-        else:
-            st.markdown(prompt)
+        st.markdown(prompt)
 
     thinking_box = st.empty()
     ai_box = st.empty()
@@ -99,12 +95,11 @@ if prompt:
     inside_think = False
 
     response = client.chat.completions.create(
-        model="deepseek-r1-distill-llama-70b",
+        model="qwen/qwen3-32b",
         temperature=0.4,
         max_tokens=2048,
         messages=(
             [{'role': 'system', 'content': config}] +
-            [{'role': 'system', 'content': tone}] +
             [{"role": role, "content": msg} for role, msg in current_chat]
         ),
         stream=True,
